@@ -94,9 +94,9 @@ bool QuadTree::IsLeaf() const
 }
 
 // Add a point to the tree, subdividing as needed
-void QuadTree::InsertPoint(Point point)
+void QuadTree::InsertPoint(Point* point)
 {
-	if (!bounds.Contains(point))
+	if (!bounds.Contains(*point))
 	{
 		throw std::exception("InsertPoint called with an out-of-bounds point.");
 	}
@@ -115,22 +115,22 @@ void QuadTree::InsertPoint(Point point)
 			// Quad is now overcrowded. We need to subdivide
 			Subdivide();
 		}
-	}
+	} 
 	else
 	{
-		if (topLeft->CanContain(point))
+		if (topLeft->CanContain(*point))
 		{
 			topLeft->InsertPoint(point);
 		}
-		else if (topRight->CanContain(point))
+		else if (topRight->CanContain(*point))
 		{
 			topRight->InsertPoint(point);
 		}
-		else if (bottomLeft->CanContain(point))
+		else if (bottomLeft->CanContain(*point))
 		{
 			bottomLeft->InsertPoint(point);
 		}
-		else if (bottomRight->CanContain(point))
+		else if (bottomRight->CanContain(*point))
 		{
 			bottomRight->InsertPoint(point);
 		}
@@ -163,19 +163,19 @@ void QuadTree::Subdivide()
 	{
 		auto point = points.back();
 
-		if (topLeft->CanContain(point))
+		if (topLeft->CanContain(*point))
 		{
 			topLeft->InsertPoint(point);
 		}
-		else if (topRight->CanContain(point))
+		else if (topRight->CanContain(*point))
 		{
 			topRight->InsertPoint(point);
 		}
-		else if (bottomLeft->CanContain(point))
+		else if (bottomLeft->CanContain(*point))
 		{
 			bottomLeft->InsertPoint(point);
 		}
-		else if (bottomRight->CanContain(point))
+		else if (bottomRight->CanContain(*point))
 		{
 			bottomRight->InsertPoint(point);
 		}
@@ -185,9 +185,9 @@ void QuadTree::Subdivide()
 }
 
 // Return all points in the quad tree located within the specified bounds
-std::vector<Point> QuadTree::Query(const Rect& rect) const
+std::vector<Point*> QuadTree::Query(const Rect& rect) const
 {
-	auto ret = std::vector<Point>();
+	auto ret = std::vector<Point*>();
 
 	if (rect.Intersects(bounds))
 	{
@@ -196,13 +196,17 @@ std::vector<Point> QuadTree::Query(const Rect& rect) const
 			if (rect.Contains(bounds))
 			{
 				// This entire rectangle is inside the query rect. No need to individually check points.
-				return points;
+				// return points;
+				for (auto i = points.begin(); i != points.end(); ++i)
+				{
+					ret.push_back(*i);
+				}
 			}
 			else
 			{
 				for (auto i = points.begin(); i != points.end(); ++i)
 				{
-					if (rect.Contains(*i))
+					if (rect.Contains(**i))
 					{
 						ret.push_back(*i);
 					}

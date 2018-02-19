@@ -96,7 +96,7 @@ class QuadTree
 	int level;
 
 	Rect bounds;
-	std::vector<Point> points;
+	std::vector<Point*> points;
 
 	// Child trees, if they exist
 	QuadTree* topLeft;
@@ -124,13 +124,13 @@ public:
 	bool IsLeaf() const;
 
 	// Add a point to the tree, subdividing as needed
-	void InsertPoint(Point point);
+	void InsertPoint(Point* point);
 
 	// Create four child trees from this one, placing the point within the appropriate one
 	void Subdivide();
 
 	// Return all points in the quad tree located within the specified bounds
-	std::vector<Point> Query(const Rect& rect) const;
+	std::vector<Point*> Query(const Rect& rect) const;
 
 	// Destructor. Clean up child trees
 	~QuadTree()
