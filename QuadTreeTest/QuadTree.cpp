@@ -26,6 +26,15 @@ bool Rect::Contains(const Point& point) const
 		point.y <= hy;
 }
 
+// Returns true if the given rect is entirely within this one
+bool Rect::Contains(const Rect& rect) const
+{
+	return rect.lx > lx &&
+		rect.ly > ly &&
+		rect.hx < hx &&
+		rect.hy < hy;
+}
+
 // Returns true if the rect intersects this one
 bool Rect::Intersects(const Rect& rect) const
 {
@@ -184,7 +193,12 @@ std::vector<Point> QuadTree::Query(const Rect& rect) const
 	{
 		if (IsLeaf())
 		{
-			if (points.size() > 0)
+			if (rect.Contains(bounds))
+			{
+				// This entire rectangle is inside the query rect. No need to individually check points.
+				return points;
+			}
+			else
 			{
 				for (auto i = points.begin(); i != points.end(); ++i)
 				{

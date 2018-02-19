@@ -66,6 +66,9 @@ struct Rect
 	// Returns true if the point is within these bounds
 	bool Contains(const Point& point) const;
 
+	// Returns true if the given rect is entirely within this one
+	bool Contains(const Rect& rect) const;
+
 	// Returns true if the rect intersects this one
 	bool Intersects(const Rect& rect) const;
 
