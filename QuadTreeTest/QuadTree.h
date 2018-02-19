@@ -5,7 +5,7 @@
 
 // Constants
 const float quadExpansionPadding = 0.1f;
-const int maxPointsPerQuad = 1000;
+const int maxPointsPerQuad = 100;
 
 /* The following structs are packed with no padding. */
 #pragma pack(push, 1)
@@ -51,7 +51,15 @@ struct Point
 	{
 		return rank > rhs.rank;
 	}
+
+	bool operator > (const Point& rhs) const
+	{
+		return rank < rhs.rank;
+	}
 };
+
+
+bool comparePoints(Point* a, Point* b);
 
 struct Rect
 {
@@ -116,6 +124,9 @@ public:
 	{
 		// std::cout << "Create quad: " << bounds << ", level: " << level << std::endl;
 	}
+
+	// Compute tree depth
+	int GetDepth() const;
 
 	// Returns whether the given point falls within our bounds
 	bool CanContain(const Point& point) const;

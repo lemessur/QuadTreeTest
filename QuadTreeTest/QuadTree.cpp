@@ -1,12 +1,19 @@
 #include "QuadTree.h"
 
 #include <ostream>
+#include <algorithm>
+
+bool comparePoints(Point* a, Point* b)
+{
+	return a->rank < b->rank;
+}
 
 // For debug printing a Point object
 std::ostream & operator<<(std::ostream & stream, const Point & point)
 {
 	stream << std::fixed;
-	stream << "id: " << point.id << ", rank: " << point.rank << ", x: " << point.x << ", y: " << point.y;
+	// stream << "id: " << point.id << ", rank: " << point.rank << ", x: " << point.x << ", y: " << point.y;
+	stream << "rank: " << point.rank << ", x: " << point.x << ", y: " << point.y;
 	// stream << "(" << point.x << ", " << point.y << ")";
 	return stream;
 }
@@ -78,6 +85,32 @@ std::ostream& operator << (std::ostream& stream, const Rect& rect)
 	stream << std::fixed;
 	stream << "(" << rect.lx << ", " << rect.ly << "), (" << rect.hx << ", " << rect.hy << ")";
 	return stream;
+}
+
+// Compute tree depth
+int QuadTree::GetDepth() const
+{
+	if (IsLeaf())
+	{
+		return level;
+	}
+
+	std::vector<int> childValues;
+	childValues.push_back(topLeft->GetDepth());
+	childValues.push_back(topRight->GetDepth());
+	childValues.push_back(bottomLeft->GetDepth());
+	childValues.push_back(bottomRight->GetDepth());
+
+	int max = childValues[0];
+	for (auto i = 0; i < childValues.size(); ++i)
+	{
+		if (childValues[i] > max)
+		{
+			max = childValues[i];
+		}
+	}
+
+	return max;
 }
 
 // Returns whether the given point falls within our bounds
@@ -179,6 +212,10 @@ void QuadTree::Subdivide()
 		{
 			bottomRight->InsertPoint(point);
 		}
+		else
+		{
+			throw std::exception("Failed to subdivide");
+		}
 
 		points.pop_back();
 	}
@@ -196,11 +233,11 @@ std::vector<Point*> QuadTree::Query(const Rect& rect) const
 			if (rect.Contains(bounds))
 			{
 				// This entire rectangle is inside the query rect. No need to individually check points.
-				// return points;
-				for (auto i = points.begin(); i != points.end(); ++i)
+				return points;
+				/* for (auto i = points.begin(); i != points.end(); ++i)
 				{
 					ret.push_back(*i);
-				}
+				} */
 			}
 			else
 			{
