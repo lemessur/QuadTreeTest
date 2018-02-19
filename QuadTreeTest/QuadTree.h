@@ -7,6 +7,9 @@
 const float quadExpansionPadding = 0.1f;
 const int maxPointsPerQuad = 1000;
 
+/* The following structs are packed with no padding. */
+#pragma pack(push, 1)
+
 struct Point
 {
 	int8_t id;
@@ -31,6 +34,13 @@ struct Point
 	Point(float _x, float _y)
 		:id(0),
 		rank(0),
+		x(_x),
+		y(_y)
+	{}
+
+	Point(float _x, float _y, int32_t _rank)
+		:id(0),
+		rank(_rank),
 		x(_x),
 		y(_y)
 	{}
@@ -78,6 +88,8 @@ struct Rect
 	friend std::ostream& operator << (std::ostream& stream, const Rect& rect);
 };
 
+#pragma pack(pop)
+
 class QuadTree
 {
 	// How many levels deep are we? (0-indexed)
@@ -93,16 +105,8 @@ class QuadTree
 	QuadTree* bottomRight;
 
 public:
-	
-	QuadTree()
-		:topLeft(nullptr),
-		topRight(nullptr),
-		bottomLeft(nullptr),
-		bottomRight(nullptr),
-		level(0)
-	{}
 
-	QuadTree(const Rect& _bounds, int _level)
+	QuadTree(const Rect& _bounds, int _level = 0)
 		:topLeft(nullptr),
 		topRight(nullptr),
 		bottomLeft(nullptr),

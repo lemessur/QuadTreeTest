@@ -6,8 +6,8 @@
 std::ostream & operator<<(std::ostream & stream, const Point & point)
 {
 	stream << std::fixed;
-	// stream << "id: " << point.id << ", rank: " << point.rank << ", x: " << point.x << ", y: " << point.y;
-	stream << "(" << point.x << ", " << point.y << ")";
+	stream << "id: " << point.id << ", rank: " << point.rank << ", x: " << point.x << ", y: " << point.y;
+	// stream << "(" << point.x << ", " << point.y << ")";
 	return stream;
 }
 
